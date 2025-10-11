@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenStreamerServer", "ScreenStreamerServer\ScreenStreamerServer.csproj", "{A9562A55-0F39-40B5-B892-4955D6BB50B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenStreamerClientConsole", "ScreenStreamerClientConsole\ScreenStreamerClientConsole.csproj", "{7C07D5BD-8878-4D84-B37E-623E19967737}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9562A55-0F39-40B5-B892-4955D6BB50B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9562A55-0F39-40B5-B892-4955D6BB50B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9562A55-0F39-40B5-B892-4955D6BB50B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9562A55-0F39-40B5-B892-4955D6BB50B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C07D5BD-8878-4D84-B37E-623E19967737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C07D5BD-8878-4D84-B37E-623E19967737}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C07D5BD-8878-4D84-B37E-623E19967737}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C07D5BD-8878-4D84-B37E-623E19967737}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64C3EE73-92DE-4A34-AE7D-2980FAB981B3}
+	EndGlobalSection
+EndGlobal
