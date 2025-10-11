@@ -18,12 +18,9 @@ namespace ScreenStreamerServer
         private void _timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             LogVerbose("Timer Elapsed");
-            SendPixels(GetPixels());
+            SendPixelsV1(GetPixelsV1());
+            //SendPixelsV2(GetPixelsV2());
         }
-
-        private readonly System.Timers.Timer _timer;
-        private UdpClient _client;
-        private readonly BackgroundWorker _backgroundWorker;
 
         private void btnStart_Click(object sender, EventArgs e)
         {
@@ -113,8 +110,8 @@ namespace ScreenStreamerServer
             btnStop.Enabled = false;
             LogVerbose("Stopping");
             _timer.Stop();
-            _client.Close();
-            _client.Dispose();
+            _client?.Close();
+            _client?.Dispose();
             LogVerbose("Stopped");
             btnStart.Enabled = true;
         }
@@ -124,7 +121,7 @@ namespace ScreenStreamerServer
             rtbLog.Text = "";
         }
 
-        private List<PixelV1> GetPixels()
+        private List<PixelV1> GetPixelsV1()
         {
             string filePath = tbxFilePath.Text;
 
@@ -148,7 +145,7 @@ namespace ScreenStreamerServer
             return pixels;
         }
 
-        private void SendPixels(List<PixelV1> pixels)
+        private void SendPixelsV1(List<PixelV1> pixels)
         {
             LogVerbose("Sending pixels");
             int packetCount = 0;
@@ -157,7 +154,7 @@ namespace ScreenStreamerServer
                 try
                 {
                     byte[] array = groupOfPixels.Serialize();
-                    int bytesSent = _client.Send(array, array.Length);
+                    int bytesSent = _client?.Send(array, array.Length) ?? 0;
                     packetCount++;
                 }
                 catch(Exception e)
@@ -165,6 +162,60 @@ namespace ScreenStreamerServer
                     LogError($"Error sending packet {e.Message}");
                 }
             }
+            LogVerbose($"Sending complete: {packetCount}");
+        }
+
+        private List<byte[]> GetPixelsV2()
+        {
+            string filePath = tbxFilePath.Text;
+
+            LogVerbose($"Getting pixels");
+            List<byte[]> lines = new List<byte[]>();
+            using (Image image = Image.FromFile(filePath))
+            {
+                using (Bitmap bitmap = new Bitmap(image))
+                {
+                    for (short y = 0; y < image.Height; y++)
+                    {
+                        byte[] line = new byte[2+ (image.Width * 5)];
+                        Buffer.BlockCopy(BitConverter.GetBytes(y), 0, line, 0, 2);
+
+                        for (short x = 0; x < image.Width; x++)
+                        {
+                            Color c = bitmap.GetPixel(x, y);
+                            byte[] pixel = new PixelV2(y, c.R, c.G, c.B).Serialize();
+                            pixel.CopyTo(line, 2 + (x * 5));
+                        }
+
+                        lines.Add(line);
+                    }
+                }
+            }
+            LogVerbose("Pixels obtained");
+            return lines;
+        }
+
+        private void SendPixelsV2(List<byte[]> lines)
+        {
+            LogVerbose("Sending pixels");
+            int packetCount = 0;
+
+            for(int i = 0; i < lines.Count; i++)
+            {
+                try
+                {
+                    byte[] line = lines[i];
+                    int lineBytes = line.Length;
+
+                    int bytesSent = _client?.Send(line, line.Length) ?? 0;
+                    packetCount++;
+                }
+                catch(Exception e)
+                {
+                    LogError($"Error sending packet {e.Message}");
+                }
+            }
+
             LogVerbose($"Sending complete: {packetCount}");
         }
 
@@ -178,5 +229,8 @@ namespace ScreenStreamerServer
                 rtbLog.Text = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {severity} | {message}\r\n{rtbLog.Text}";
             });
         }
+
+        private readonly System.Timers.Timer _timer;
+        private UdpClient? _client;
     }
 }
