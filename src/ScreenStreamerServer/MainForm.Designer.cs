@@ -31,6 +31,11 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             rtbLog = new RichTextBox();
             panel1 = new Panel();
+            label4 = new Label();
+            panel2 = new Panel();
+            rbV1 = new RadioButton();
+            rbV2 = new RadioButton();
+            chkCompression = new CheckBox();
             label3 = new Label();
             tbxInterval = new TextBox();
             btnClearLog = new Button();
@@ -42,6 +47,7 @@
             tbxIpAddress = new TextBox();
             tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -70,6 +76,9 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(label4);
+            panel1.Controls.Add(panel2);
+            panel1.Controls.Add(chkCompression);
             panel1.Controls.Add(label3);
             panel1.Controls.Add(tbxInterval);
             panel1.Controls.Add(btnClearLog);
@@ -84,6 +93,56 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(519, 698);
             panel1.TabIndex = 1;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(9, 112);
+            label4.Name = "label4";
+            label4.Size = new Size(45, 15);
+            label4.TabIndex = 13;
+            label4.Text = "Version";
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(rbV1);
+            panel2.Controls.Add(rbV2);
+            panel2.Location = new Point(139, 112);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(76, 54);
+            panel2.TabIndex = 12;
+            // 
+            // rbV1
+            // 
+            rbV1.AutoSize = true;
+            rbV1.Checked = true;
+            rbV1.Location = new Point(3, 3);
+            rbV1.Name = "rbV1";
+            rbV1.Size = new Size(38, 19);
+            rbV1.TabIndex = 10;
+            rbV1.TabStop = true;
+            rbV1.Text = "V1";
+            rbV1.UseVisualStyleBackColor = true;
+            // 
+            // rbV2
+            // 
+            rbV2.AutoSize = true;
+            rbV2.Location = new Point(3, 28);
+            rbV2.Name = "rbV2";
+            rbV2.Size = new Size(38, 19);
+            rbV2.TabIndex = 11;
+            rbV2.Text = "V2";
+            rbV2.UseVisualStyleBackColor = true;
+            // 
+            // chkCompression
+            // 
+            chkCompression.AutoSize = true;
+            chkCompression.Location = new Point(139, 87);
+            chkCompression.Name = "chkCompression";
+            chkCompression.Size = new Size(130, 19);
+            chkCompression.TabIndex = 9;
+            chkCompression.Text = "Apply Compression";
+            chkCompression.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -104,7 +163,7 @@
             // 
             // btnClearLog
             // 
-            btnClearLog.Location = new Point(139, 137);
+            btnClearLog.Location = new Point(139, 255);
             btnClearLog.Name = "btnClearLog";
             btnClearLog.Size = new Size(75, 23);
             btnClearLog.TabIndex = 6;
@@ -114,7 +173,7 @@
             // 
             // btnStop
             // 
-            btnStop.Location = new Point(220, 87);
+            btnStop.Location = new Point(220, 226);
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(75, 23);
             btnStop.TabIndex = 5;
@@ -124,7 +183,7 @@
             // 
             // btnStart
             // 
-            btnStart.Location = new Point(139, 87);
+            btnStart.Location = new Point(139, 226);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(75, 23);
             btnStart.TabIndex = 4;
@@ -163,6 +222,7 @@
             tbxIpAddress.Name = "tbxIpAddress";
             tbxIpAddress.Size = new Size(242, 23);
             tbxIpAddress.TabIndex = 0;
+            tbxIpAddress.Text = "127.0.0.1";
             // 
             // MainForm
             // 
@@ -177,6 +237,8 @@
             tableLayoutPanel1.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -194,5 +256,10 @@
         private Button btnClearLog;
         private Label label3;
         private TextBox tbxInterval;
+        private CheckBox chkCompression;
+        private Panel panel2;
+        private RadioButton rbV1;
+        private RadioButton rbV2;
+        private Label label4;
     }
 }

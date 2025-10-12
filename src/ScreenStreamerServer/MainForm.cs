@@ -1,5 +1,4 @@
 using ScreenStreamerServer.DTO;
-using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 
@@ -18,30 +17,68 @@ namespace ScreenStreamerServer
         private void _timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             LogVerbose("Timer Elapsed");
-            SendPixelsV1(GetPixelsV1());
-            //SendPixelsV2(GetPixelsV2());
+
+            SendData();
+        }
+
+        private void SendData()
+        {
+            if (rbV1.Checked)
+                SendPixelsV1(GetPixelsV1());
+            else
+                SendPixelsV2(GetPixelsV2());
+        }
+
+        private void UpdateState(ApplicationState newState)
+        {
+            switch(newState)
+            {
+                case ApplicationState.Stopped:
+                    LogVerbose("Stopped");
+                    btnStart.Enabled = true;
+                    btnStop.Enabled = false;
+                    tbxFilePath.Enabled = true;
+                    chkCompression.Enabled = true;
+                    rbV1.Enabled = true;
+                    rbV2.Enabled = true;
+                    break;
+                case ApplicationState.Starting:
+                    LogVerbose("Starting");
+                    btnStart.Enabled = false;
+                    tbxFilePath.Enabled = false;
+                    chkCompression.Enabled = false;
+                    rbV1.Enabled = false;
+                    rbV2.Enabled = false;
+                    break;
+                case ApplicationState.Running:
+                    LogVerbose("Running");
+                    btnStop.Enabled = true;
+                    break;
+                case ApplicationState.Stopping:
+                    LogVerbose("Stopping");
+                    _timer.Stop();
+                    _client?.Close();
+                    _client?.Dispose();
+                    break;
+            }
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            btnStart.Enabled = false;
-            tbxFilePath.Enabled = false;
-            LogVerbose("Starting");
+            UpdateState(ApplicationState.Starting);
 
             string ipAddressStr = tbxIpAddress.Text;
             if (string.IsNullOrEmpty(ipAddressStr))
             {
                 LogError("IP Address is not set");
-                btnStart.Enabled = true;
-                tbxFilePath.Enabled = true;
+                UpdateState(ApplicationState.Stopped);
                 return;
             }
 
             if(!IPAddress.TryParse(ipAddressStr, out IPAddress? ipAddress))
             {
                 LogError("Invalid IP Address");
-                btnStart.Enabled = true;
-                tbxFilePath.Enabled = true;
+                UpdateState(ApplicationState.Stopped);
                 return;
             }
 
@@ -49,16 +86,14 @@ namespace ScreenStreamerServer
             if (string.IsNullOrEmpty(intervalStr))
             {
                 LogError("Invalid interval");
-                btnStart.Enabled = true;
-                tbxFilePath.Enabled = true;
+                UpdateState(ApplicationState.Stopped);
                 return;
             }
 
             if(!int.TryParse(intervalStr, out int interval))
             {
                 LogError("Invalid interval");
-                btnStart.Enabled = true;
-                tbxFilePath.Enabled = true;
+                UpdateState(ApplicationState.Stopped);
                 return;
             }
 
@@ -73,8 +108,7 @@ namespace ScreenStreamerServer
             catch(Exception ex)
             {
                 LogError(ex.Message);
-                btnStart.Enabled = true;
-                tbxFilePath.Enabled = true;
+                UpdateState(ApplicationState.Stopped);
                 return;
             }
             
@@ -82,38 +116,28 @@ namespace ScreenStreamerServer
             if(string.IsNullOrEmpty(filePath))
             {
                 LogError("File Path was not set");
-                btnStart.Enabled = true;
-                tbxFilePath.Enabled = true;
-                _client.Close();
-                _client.Dispose();
+                UpdateState(ApplicationState.Stopping);
+                UpdateState(ApplicationState.Stopped);
                 return;
             }
 
             if(!File.Exists(filePath))
             {
                 LogError($"{filePath} does not exist");
-                btnStart.Enabled = true;
-                tbxFilePath.Enabled = true;
-                _client.Close();
-                _client.Dispose();
+                UpdateState(ApplicationState.Stopping);
+                UpdateState(ApplicationState.Stopped);
                 return;
             }
 
             _timer.Start();
-            LogVerbose("Started");
-            
-            btnStop.Enabled = true;
+            UpdateState(ApplicationState.Running);
+            SendData();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            btnStop.Enabled = false;
-            LogVerbose("Stopping");
-            _timer.Stop();
-            _client?.Close();
-            _client?.Dispose();
-            LogVerbose("Stopped");
-            btnStart.Enabled = true;
+            UpdateState(ApplicationState.Stopping);
+            UpdateState(ApplicationState.Stopped);
         }
 
         private void btnClearLog_Click(object sender, EventArgs e)
@@ -121,40 +145,84 @@ namespace ScreenStreamerServer
             rtbLog.Text = "";
         }
 
-        private List<PixelV1> GetPixelsV1()
+
+        private T GetPixelsFromImage<T>(Func<Image, Bitmap, T> func)
         {
             string filePath = tbxFilePath.Text;
 
             LogVerbose($"Getting pixels");
-            List<PixelV1> pixels = new List<PixelV1>();
+
             using (Image image = Image.FromFile(filePath))
             {
                 using (Bitmap bitmap = new Bitmap(image))
                 {
-                    for (short h = 0; h < image.Height; h++)
-                    {
-                        for (short w = 0; w < image.Width; w++)
-                        {
-                            Color c = bitmap.GetPixel(w, h);
-                            pixels.Add(new PixelV1(w, h, c.R, c.G, c.B));
-                        }
-                    }
+                    return func(image, bitmap);
                 }
             }
-            LogVerbose("Pixles obtained");
-            return pixels;
         }
+
+        private List<PixelV1> GetPixelsV1()
+        {
+            return GetPixelsFromImage<List<PixelV1>>((image, bitmap) =>
+            {
+                List<PixelV1> pixels = new List<PixelV1>();
+                for (short h = 0; h < image.Height; h++)
+                {
+                    for (short w = 0; w < image.Width; w++)
+                    {
+                        Color c = bitmap.GetPixel(w, h);
+                        pixels.Add(new PixelV1(w, h, c.R, c.G, c.B));
+                    }
+                }
+                return pixels;
+            });
+        }
+
+        private List<byte[]> GetPixelsV2()
+        {
+            return GetPixelsFromImage<List<byte[]>>((image, bitmap) =>
+            {
+                List<byte[]> lines = new List<byte[]>();
+                for (short y = 0; y < image.Height; y++)
+                {
+                    byte[] line = new byte[2 + (image.Width * 5)];
+                    Buffer.BlockCopy(BitConverter.GetBytes(y), 0, line, 0, 2);
+
+                    for (short x = 0; x < image.Width; x++)
+                    {
+                        Color c = bitmap.GetPixel(x, y);
+                        byte[] pixel = new PixelV2(y, c.R, c.G, c.B).Serialize();
+                        pixel.CopyTo(line, 2 + (x * 5));
+                    }
+
+                    lines.Add(line);
+                }
+                return lines;
+            });
+        }
+
 
         private void SendPixelsV1(List<PixelV1> pixels)
         {
             LogVerbose("Sending pixels");
             int packetCount = 0;
-            foreach(var groupOfPixels in pixels.Chunk(6000))
+
+            IEnumerable<PixelV1[]> pixelGroup = chkCompression.Checked ? pixels.Chunk(10000) : pixels.Chunk(6000);
+
+            foreach(var groupOfPixels in pixelGroup)
             {
                 try
                 {
                     byte[] array = groupOfPixels.Serialize();
-                    int bytesSent = _client?.Send(array, array.Length) ?? 0;
+                    if(chkCompression.Checked)
+                    {
+                        byte[] compressedBytes = Compressor.Compress(array);
+                        int bytesSent = _client?.Send(compressedBytes, compressedBytes.Length) ?? 0;
+                    }
+                    else
+                    {
+                        int bytesSent = _client?.Send(array, array.Length) ?? 0;
+                    }
                     packetCount++;
                 }
                 catch(Exception e)
@@ -163,36 +231,6 @@ namespace ScreenStreamerServer
                 }
             }
             LogVerbose($"Sending complete: {packetCount}");
-        }
-
-        private List<byte[]> GetPixelsV2()
-        {
-            string filePath = tbxFilePath.Text;
-
-            LogVerbose($"Getting pixels");
-            List<byte[]> lines = new List<byte[]>();
-            using (Image image = Image.FromFile(filePath))
-            {
-                using (Bitmap bitmap = new Bitmap(image))
-                {
-                    for (short y = 0; y < image.Height; y++)
-                    {
-                        byte[] line = new byte[2+ (image.Width * 5)];
-                        Buffer.BlockCopy(BitConverter.GetBytes(y), 0, line, 0, 2);
-
-                        for (short x = 0; x < image.Width; x++)
-                        {
-                            Color c = bitmap.GetPixel(x, y);
-                            byte[] pixel = new PixelV2(y, c.R, c.G, c.B).Serialize();
-                            pixel.CopyTo(line, 2 + (x * 5));
-                        }
-
-                        lines.Add(line);
-                    }
-                }
-            }
-            LogVerbose("Pixels obtained");
-            return lines;
         }
 
         private void SendPixelsV2(List<byte[]> lines)
@@ -207,7 +245,16 @@ namespace ScreenStreamerServer
                     byte[] line = lines[i];
                     int lineBytes = line.Length;
 
-                    int bytesSent = _client?.Send(line, line.Length) ?? 0;
+                    if (chkCompression.Checked)
+                    {
+                        byte[] compressedBytes = Compressor.Compress(line);
+                        int bytesSent = _client?.Send(compressedBytes, compressedBytes.Length) ?? 0;
+                    }
+                    else
+                    {
+                        int bytesSent = _client?.Send(line, line.Length) ?? 0;
+                    }
+                    
                     packetCount++;
                 }
                 catch(Exception e)
