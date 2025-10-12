@@ -1,6 +1,7 @@
 using ScreenStreamerServer.DTO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.Json;
 
 namespace ScreenStreamerServer
 {
@@ -31,7 +32,7 @@ namespace ScreenStreamerServer
 
         private void UpdateState(ApplicationState newState)
         {
-            switch(newState)
+            switch (newState)
             {
                 case ApplicationState.Stopped:
                     LogVerbose("Stopped");
@@ -75,7 +76,7 @@ namespace ScreenStreamerServer
                 return;
             }
 
-            if(!IPAddress.TryParse(ipAddressStr, out IPAddress? ipAddress))
+            if (!IPAddress.TryParse(ipAddressStr, out IPAddress? ipAddress))
             {
                 LogError("Invalid IP Address");
                 UpdateState(ApplicationState.Stopped);
@@ -90,7 +91,7 @@ namespace ScreenStreamerServer
                 return;
             }
 
-            if(!int.TryParse(intervalStr, out int interval))
+            if (!int.TryParse(intervalStr, out int interval))
             {
                 LogError("Invalid interval");
                 UpdateState(ApplicationState.Stopped);
@@ -105,15 +106,15 @@ namespace ScreenStreamerServer
             {
                 _client.Connect(ipAddress, 42069);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogError(ex.Message);
                 UpdateState(ApplicationState.Stopped);
                 return;
             }
-            
+
             string filePath = tbxFilePath.Text;
-            if(string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrEmpty(filePath))
             {
                 LogError("File Path was not set");
                 UpdateState(ApplicationState.Stopping);
@@ -121,7 +122,7 @@ namespace ScreenStreamerServer
                 return;
             }
 
-            if(!File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
                 LogError($"{filePath} does not exist");
                 UpdateState(ApplicationState.Stopping);
@@ -206,18 +207,18 @@ namespace ScreenStreamerServer
             short height = 256;
             short width = 256;
 
-            using(Bitmap bitmap = new Bitmap(width, height))
+            using (Bitmap bitmap = new Bitmap(width, height))
             {
                 using (Graphics graphics = Graphics.FromImage(bitmap))
                 {
                     graphics.CopyFromScreen(Point.Empty, Point.Empty, new Size(width, height));
                 }
 
-                for(short y = 0; y < height; y++)
+                for (short y = 0; y < height; y++)
                 {
                     byte[] row = new byte[2 + (width * 5)];//5 is the size of a pixel
                     int offset = 2;
-                    for(short x = 0; x < width; x++)
+                    for (short x = 0; x < width; x++)
                     {
                         Color c = bitmap.GetPixel(x, y);
                         byte[] pixel = new PixelV2(x, c.R, c.G, c.B).Serialize();
@@ -235,12 +236,12 @@ namespace ScreenStreamerServer
 
             IEnumerable<PixelV1[]> pixelGroup = chkCompression.Checked ? pixels.Chunk(10000) : pixels.Chunk(6000);
 
-            foreach(var groupOfPixels in pixelGroup)
+            foreach (var groupOfPixels in pixelGroup)
             {
                 try
                 {
                     byte[] array = groupOfPixels.Serialize();
-                    if(chkCompression.Checked)
+                    if (chkCompression.Checked)
                     {
                         byte[] compressedBytes = Compressor.Compress(array);
                         int bytesSent = _client?.Send(compressedBytes, compressedBytes.Length) ?? 0;
@@ -251,7 +252,7 @@ namespace ScreenStreamerServer
                     }
                     packetCount++;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     LogError($"Error sending packet {e.Message}");
                 }
@@ -264,7 +265,7 @@ namespace ScreenStreamerServer
             LogVerbose("Sending pixels");
             int packetCount = 0;
 
-            for(int i = 0; i < lines.Count; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 try
                 {
@@ -280,10 +281,10 @@ namespace ScreenStreamerServer
                     {
                         int bytesSent = _client?.Send(line, line.Length) ?? 0;
                     }
-                    
+
                     packetCount++;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     LogError($"Error sending packet {e.Message}");
                 }
@@ -305,5 +306,55 @@ namespace ScreenStreamerServer
 
         private readonly System.Timers.Timer _timer;
         private UdpClient? _client;
+
+        private void btnLoadConfig_Click(object sender, EventArgs e)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string configFilePath = Path.Combine(currentDirectory, "config.json");
+            if(File.Exists(configFilePath))
+            {
+                ServerConfiguration? configuration = JsonSerializer.Deserialize<ServerConfiguration>(File.ReadAllText(configFilePath));
+                tbxFilePath.Text = configuration.FilePath;
+                tbxIpAddress.Text = configuration.IpAddress;
+                tbxInterval.Text = configuration.Interval.ToString();
+                chkCompression.Checked = configuration.Compression;
+                rbV1.Checked = configuration.Version == "V1";
+                rbV2.Checked = configuration.Version == "V2";
+                LogVerbose("Configuration Loaded");
+            }
+            else
+            {
+                LogError($"No configuration file was found");
+            }
+        }
+
+        private void btnSaveConfig_Click(object sender, EventArgs e)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string configFilePath = Path.Combine(currentDirectory, "config.json");
+            ServerConfiguration configuration = new ServerConfiguration
+            {
+                Interval = int.Parse(tbxInterval.Text),
+                Compression = chkCompression.Checked,
+                FilePath = tbxFilePath.Text,
+                IpAddress = tbxIpAddress.Text,
+                Version = rbV1.Checked ? "V1" : "V2"
+            };
+            File.WriteAllText(configFilePath, JsonSerializer.Serialize(configuration));
+            LogVerbose("Configuration Saved");
+        }
+    }
+
+    public class ServerConfiguration
+    {
+        public string? IpAddress { get; set; }
+
+        public string? FilePath { get; set; }
+
+        public int Interval { get; set; } 
+
+        public bool Compression { get; set; }
+
+        public string? Version { get; set; }
     }
 }

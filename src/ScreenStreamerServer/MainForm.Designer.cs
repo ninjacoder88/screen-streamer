@@ -31,22 +31,26 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             rtbLog = new RichTextBox();
             panel1 = new Panel();
+            panel3 = new Panel();
+            btnSaveConfig = new Button();
             label4 = new Label();
+            btnLoadConfig = new Button();
             panel2 = new Panel();
             rbV1 = new RadioButton();
             rbV2 = new RadioButton();
+            label1 = new Label();
             chkCompression = new CheckBox();
+            tbxIpAddress = new TextBox();
             label3 = new Label();
+            label2 = new Label();
             tbxInterval = new TextBox();
+            tbxFilePath = new TextBox();
             btnClearLog = new Button();
             btnStop = new Button();
             btnStart = new Button();
-            label2 = new Label();
-            tbxFilePath = new TextBox();
-            label1 = new Label();
-            tbxIpAddress = new TextBox();
             tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
+            panel3.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -76,38 +80,68 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(label4);
-            panel1.Controls.Add(panel2);
-            panel1.Controls.Add(chkCompression);
-            panel1.Controls.Add(label3);
-            panel1.Controls.Add(tbxInterval);
+            panel1.Controls.Add(panel3);
             panel1.Controls.Add(btnClearLog);
             panel1.Controls.Add(btnStop);
             panel1.Controls.Add(btnStart);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(tbxFilePath);
-            panel1.Controls.Add(label1);
-            panel1.Controls.Add(tbxIpAddress);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 3);
             panel1.Name = "panel1";
             panel1.Size = new Size(519, 698);
             panel1.TabIndex = 1;
             // 
+            // panel3
+            // 
+            panel3.Controls.Add(btnSaveConfig);
+            panel3.Controls.Add(label4);
+            panel3.Controls.Add(btnLoadConfig);
+            panel3.Controls.Add(panel2);
+            panel3.Controls.Add(label1);
+            panel3.Controls.Add(chkCompression);
+            panel3.Controls.Add(tbxIpAddress);
+            panel3.Controls.Add(label3);
+            panel3.Controls.Add(label2);
+            panel3.Controls.Add(tbxInterval);
+            panel3.Controls.Add(tbxFilePath);
+            panel3.Location = new Point(3, 3);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(513, 224);
+            panel3.TabIndex = 14;
+            // 
+            // btnSaveConfig
+            // 
+            btnSaveConfig.Location = new Point(136, 6);
+            btnSaveConfig.Name = "btnSaveConfig";
+            btnSaveConfig.Size = new Size(130, 23);
+            btnSaveConfig.TabIndex = 1;
+            btnSaveConfig.Text = "Save Configuration";
+            btnSaveConfig.UseVisualStyleBackColor = true;
+            btnSaveConfig.Click += btnSaveConfig_Click;
+            // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(9, 112);
+            label4.Location = new Point(6, 153);
             label4.Name = "label4";
             label4.Size = new Size(45, 15);
             label4.TabIndex = 13;
             label4.Text = "Version";
             // 
+            // btnLoadConfig
+            // 
+            btnLoadConfig.Location = new Point(6, 6);
+            btnLoadConfig.Name = "btnLoadConfig";
+            btnLoadConfig.Size = new Size(124, 23);
+            btnLoadConfig.TabIndex = 0;
+            btnLoadConfig.Text = "Load Configuration";
+            btnLoadConfig.UseVisualStyleBackColor = true;
+            btnLoadConfig.Click += btnLoadConfig_Click;
+            // 
             // panel2
             // 
             panel2.Controls.Add(rbV1);
             panel2.Controls.Add(rbV2);
-            panel2.Location = new Point(139, 112);
+            panel2.Location = new Point(136, 153);
             panel2.Name = "panel2";
             panel2.Size = new Size(76, 54);
             panel2.TabIndex = 12;
@@ -134,36 +168,68 @@
             rbV2.Text = "V2";
             rbV2.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(3, 44);
+            label1.Name = "label1";
+            label1.Size = new Size(96, 15);
+            label1.TabIndex = 1;
+            label1.Text = "Client IP Address";
+            // 
             // chkCompression
             // 
             chkCompression.AutoSize = true;
-            chkCompression.Location = new Point(139, 87);
+            chkCompression.Location = new Point(136, 128);
             chkCompression.Name = "chkCompression";
             chkCompression.Size = new Size(130, 19);
             chkCompression.TabIndex = 9;
             chkCompression.Text = "Apply Compression";
             chkCompression.UseVisualStyleBackColor = true;
             // 
+            // tbxIpAddress
+            // 
+            tbxIpAddress.Location = new Point(136, 41);
+            tbxIpAddress.Name = "tbxIpAddress";
+            tbxIpAddress.Size = new Size(242, 23);
+            tbxIpAddress.TabIndex = 0;
+            // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(9, 64);
+            label3.Location = new Point(6, 102);
             label3.Name = "label3";
             label3.Size = new Size(124, 15);
             label3.TabIndex = 8;
             label3.Text = "Internal (milliseconds)";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(6, 73);
+            label2.Name = "label2";
+            label2.Size = new Size(52, 15);
+            label2.TabIndex = 3;
+            label2.Text = "File Path";
+            // 
             // tbxInterval
             // 
-            tbxInterval.Location = new Point(139, 58);
+            tbxInterval.Location = new Point(136, 99);
             tbxInterval.Name = "tbxInterval";
             tbxInterval.Size = new Size(55, 23);
             tbxInterval.TabIndex = 7;
             tbxInterval.Text = "10000";
             // 
+            // tbxFilePath
+            // 
+            tbxFilePath.Location = new Point(136, 70);
+            tbxFilePath.Name = "tbxFilePath";
+            tbxFilePath.Size = new Size(242, 23);
+            tbxFilePath.TabIndex = 2;
+            // 
             // btnClearLog
             // 
-            btnClearLog.Location = new Point(139, 255);
+            btnClearLog.Location = new Point(139, 318);
             btnClearLog.Name = "btnClearLog";
             btnClearLog.Size = new Size(75, 23);
             btnClearLog.TabIndex = 6;
@@ -173,7 +239,7 @@
             // 
             // btnStop
             // 
-            btnStop.Location = new Point(220, 226);
+            btnStop.Location = new Point(220, 289);
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(75, 23);
             btnStop.TabIndex = 5;
@@ -183,46 +249,13 @@
             // 
             // btnStart
             // 
-            btnStart.Location = new Point(139, 226);
+            btnStart.Location = new Point(139, 289);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(75, 23);
             btnStart.TabIndex = 4;
             btnStart.Text = "Start Server";
             btnStart.UseVisualStyleBackColor = true;
             btnStart.Click += btnStart_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(9, 35);
-            label2.Name = "label2";
-            label2.Size = new Size(52, 15);
-            label2.TabIndex = 3;
-            label2.Text = "File Path";
-            // 
-            // tbxFilePath
-            // 
-            tbxFilePath.Location = new Point(139, 29);
-            tbxFilePath.Name = "tbxFilePath";
-            tbxFilePath.Size = new Size(242, 23);
-            tbxFilePath.TabIndex = 2;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(3, 6);
-            label1.Name = "label1";
-            label1.Size = new Size(96, 15);
-            label1.TabIndex = 1;
-            label1.Text = "Client IP Address";
-            // 
-            // tbxIpAddress
-            // 
-            tbxIpAddress.Location = new Point(139, 0);
-            tbxIpAddress.Name = "tbxIpAddress";
-            tbxIpAddress.Size = new Size(242, 23);
-            tbxIpAddress.TabIndex = 0;
-            tbxIpAddress.Text = "127.0.0.1";
             // 
             // MainForm
             // 
@@ -236,7 +269,8 @@
             Text = "Screen Streamer Server";
             tableLayoutPanel1.ResumeLayout(false);
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ResumeLayout(false);
@@ -261,5 +295,8 @@
         private RadioButton rbV1;
         private RadioButton rbV2;
         private Label label4;
+        private Panel panel3;
+        private Button btnSaveConfig;
+        private Button btnLoadConfig;
     }
 }
