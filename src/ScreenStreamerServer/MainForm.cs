@@ -201,6 +201,32 @@ namespace ScreenStreamerServer
             });
         }
 
+        private void GetPixelsV3()
+        {
+            short height = 256;
+            short width = 256;
+
+            using(Bitmap bitmap = new Bitmap(width, height))
+            {
+                using (Graphics graphics = Graphics.FromImage(bitmap))
+                {
+                    graphics.CopyFromScreen(Point.Empty, Point.Empty, new Size(width, height));
+                }
+
+                for(short y = 0; y < height; y++)
+                {
+                    byte[] row = new byte[2 + (width * 5)];//5 is the size of a pixel
+                    int offset = 2;
+                    for(short x = 0; x < width; x++)
+                    {
+                        Color c = bitmap.GetPixel(x, y);
+                        byte[] pixel = new PixelV2(x, c.R, c.G, c.B).Serialize();
+                        pixel.CopyTo(row, offset += 5);
+                    }
+                }
+            }
+        }
+
 
         private void SendPixelsV1(List<PixelV1> pixels)
         {
