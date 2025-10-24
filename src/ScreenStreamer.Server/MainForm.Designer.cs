@@ -30,6 +30,7 @@
         {
             tableLayoutPanel1 = new TableLayoutPanel();
             panel1 = new Panel();
+            btnClearLogs = new Button();
             tbxIpAddress = new TextBox();
             label7 = new Label();
             tbxInterval = new TextBox();
@@ -51,7 +52,7 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             pbPreview = new PictureBox();
             rtbLogs = new RichTextBox();
-            btnClearLogs = new Button();
+            cbxCompress = new CheckBox();
             tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -75,6 +76,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(cbxCompress);
             panel1.Controls.Add(btnClearLogs);
             panel1.Controls.Add(tbxIpAddress);
             panel1.Controls.Add(label7);
@@ -99,6 +101,16 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(106, 724);
             panel1.TabIndex = 2;
+            // 
+            // btnClearLogs
+            // 
+            btnClearLogs.Location = new Point(3, 692);
+            btnClearLogs.Name = "btnClearLogs";
+            btnClearLogs.Size = new Size(99, 23);
+            btnClearLogs.TabIndex = 19;
+            btnClearLogs.Text = "Clear Logs";
+            btnClearLogs.UseVisualStyleBackColor = true;
+            btnClearLogs.Click += btnClearLogs_Click;
             // 
             // tbxIpAddress
             // 
@@ -295,15 +307,15 @@
             rtbLogs.TabIndex = 1;
             rtbLogs.Text = "";
             // 
-            // btnClearLogs
+            // cbxCompress
             // 
-            btnClearLogs.Location = new Point(3, 692);
-            btnClearLogs.Name = "btnClearLogs";
-            btnClearLogs.Size = new Size(99, 23);
-            btnClearLogs.TabIndex = 19;
-            btnClearLogs.Text = "Clear Logs";
-            btnClearLogs.UseVisualStyleBackColor = true;
-            btnClearLogs.Click += btnClearLogs_Click;
+            cbxCompress.AutoSize = true;
+            cbxCompress.Location = new Point(3, 170);
+            cbxCompress.Name = "cbxCompress";
+            cbxCompress.Size = new Size(79, 19);
+            cbxCompress.TabIndex = 21;
+            cbxCompress.Text = "Compress";
+            cbxCompress.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -348,5 +360,6 @@
         private TextBox tbxIpAddress;
         private Label label7;
         private Button btnClearLogs;
+        private CheckBox cbxCompress;
     }
 }

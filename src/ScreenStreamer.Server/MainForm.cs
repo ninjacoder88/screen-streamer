@@ -24,6 +24,8 @@ namespace ScreenStreamer.Server
 
         private bool Connected { get; set; }
 
+        private bool UseCompression { get; set; }
+
         private void MainForm_Load(object? sender, EventArgs e) => _worker.RunWorkerAsync();
 
         private void MainForm_FormClosing(object? sender, FormClosingEventArgs e) => _worker.CancelAsync();
@@ -68,6 +70,7 @@ namespace ScreenStreamer.Server
                 x2 = tbxX2.GetIntValue();
                 y2 = tbxY2.GetIntValue();
                 interval = tbxInterval.GetIntValue();
+                UseCompression = cbxCompress.GetBoolValue();
             }
             catch (Exception ex)
             {
@@ -203,8 +206,17 @@ namespace ScreenStreamer.Server
 
                 try
                 {
-                    client.Send(packet, packet.Length);
-                    LogInfo($"Sent {packet.Length} bytes | Rows Updated: {updatedRows}");
+                    if(UseCompression)
+                    {
+                        byte[] compressedPacket = Compressor.Compress(packet);
+                        client.Send(compressedPacket, compressedPacket.Length);
+                        LogInfo($"Sent {compressedPacket.Length} bytes | Rows Updated: {updatedRows}");
+                    }
+                    else
+                    {
+                        client.Send(packet, packet.Length);
+                        LogInfo($"Sent {packet.Length} bytes | Rows Updated: {updatedRows}");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -220,6 +232,8 @@ namespace ScreenStreamer.Server
             Streaming = true;
             btnStart.Enabled = false;
             btnStop.Enabled = true;
+            tbxIpAddress.Enabled = false;
+            cbxCompress.Enabled = false;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -227,6 +241,8 @@ namespace ScreenStreamer.Server
             Streaming = false;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
+            tbxIpAddress.Enabled = true;
+            cbxCompress.Enabled = true;
         }
 
         private void btnShowPreview_Click(object sender, EventArgs e)

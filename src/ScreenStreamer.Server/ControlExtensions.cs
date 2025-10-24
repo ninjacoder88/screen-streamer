@@ -24,5 +24,13 @@ namespace ScreenStreamer.Server
                 return 0;
             });
         }
+
+        public static bool GetBoolValue(this CheckBox control)
+        {
+            return control.Invoke(() =>
+            {
+                return control.Checked;
+            });
+        }
     }
 }
