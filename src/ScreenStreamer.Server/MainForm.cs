@@ -32,7 +32,7 @@ namespace ScreenStreamer.Server
 
         private void LogInfo(string message) => Log("INFO", message);
 
-        private void Log(string severity, string message) => 
+        private void Log(string severity, string message) =>
             rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {severity} - {message}\r\n{rtbLogs.Text}");
 
         private void UpdatePicture(Bitmap bitmap)
@@ -44,7 +44,7 @@ namespace ScreenStreamer.Server
                     pbPreview.Image = bitmap;
                     pbPreview.Update();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogError(ex.Message);
                 }
@@ -69,7 +69,7 @@ namespace ScreenStreamer.Server
                 y2 = tbxY2.GetIntValue();
                 interval = tbxInterval.GetIntValue();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogError(ex.Message);
                 return;
@@ -97,7 +97,7 @@ namespace ScreenStreamer.Server
                     return;
                 }
 
-                if(Streaming && !Connected)
+                if (Streaming && !Connected)
                 {
                     try
                     {
@@ -108,7 +108,7 @@ namespace ScreenStreamer.Server
                         LogInfo($"Connected to {ipAddress}");
                         Connected = true;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         LogError(ex.Message);
                     }
@@ -124,11 +124,9 @@ namespace ScreenStreamer.Server
                             g.CopyFromScreen(Point.Empty, Point.Empty, new Size(streamWidth, streamHeight));
                         }
 
-                        UpdatePicture(bitmap);
-
-                        for(short y = 0; y < streamHeight; y++)
+                        for (short y = 0; y < streamHeight; y++)
                         {
-                            for(short x = 0; x < streamWidth; x++)
+                            for (short x = 0; x < streamWidth; x++)
                             {
                                 Color c = bitmap.GetPixel(x, y);
                                 Pixel p = new Pixel(x, y, c.R, c.G, c.B);
@@ -138,9 +136,12 @@ namespace ScreenStreamer.Server
                                 current[x][y] = p;
                             }
                         }
+
+                        if(updatedPixels.Count > 0)
+                            UpdatePicture(bitmap);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogError(ex.Message);
                 }
@@ -157,6 +158,8 @@ namespace ScreenStreamer.Server
                     continue;
                 }
 
+                //TODO: handle the case where too many pixels are updated to send in a single packet
+
                 int currentByte = 0;
                 short updatedRows = 0;
                 byte[] rawPacket = new byte[5 + (7 * updatedPixels.Count)];
@@ -168,22 +171,26 @@ namespace ScreenStreamer.Server
                     rawPacket[currentByte += 2] = 0;//row count
 
                     short currentY = -1;
-                    foreach(Pixel pixel in updatedPixels)
+                    short pixelsUpdatedInRow = 0;
+                    foreach (Pixel pixel in updatedPixels)
                     {
-                        if(pixel.Y != currentY)
+                        if (pixel.Y != currentY)
                         {
                             BitConverter.GetBytes(currentY).CopyTo(rawPacket, currentByte += 2);
                             currentY = pixel.Y;
                             updatedRows++;
+                            //LogInfo($"Update {pixelsUpdatedInRow} pixels in row {currentY}");
+                            pixelsUpdatedInRow = 0;
                         }
 
                         BitConverter.GetBytes(pixel.X).CopyTo(rawPacket, currentByte += 2);
                         rawPacket[currentByte++] = pixel.R;
                         rawPacket[currentByte++] = pixel.G;
                         rawPacket[currentByte++] = pixel.B;
+                        pixelsUpdatedInRow++;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogError(ex.Message);
                 }
@@ -199,7 +206,7 @@ namespace ScreenStreamer.Server
                     client.Send(packet, packet.Length);
                     LogInfo($"Sent {packet.Length} bytes | Rows Updated: {updatedRows}");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogError(ex.Message);
                 }
@@ -239,7 +246,12 @@ namespace ScreenStreamer.Server
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private BackgroundWorker _worker;
+        private readonly BackgroundWorker _worker;
+
+        private void btnClearLogs_Click(object sender, EventArgs e)
+        {
+            rtbLogs.Invoke(() => rtbLogs.Text = "");
+        }
     }
 
     public record Pixel(short X, short Y, byte R, byte G, byte B);

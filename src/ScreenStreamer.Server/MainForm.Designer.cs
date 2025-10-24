@@ -51,6 +51,7 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             pbPreview = new PictureBox();
             rtbLogs = new RichTextBox();
+            btnClearLogs = new Button();
             tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -74,6 +75,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnClearLogs);
             panel1.Controls.Add(tbxIpAddress);
             panel1.Controls.Add(label7);
             panel1.Controls.Add(tbxInterval);
@@ -293,6 +295,16 @@
             rtbLogs.TabIndex = 1;
             rtbLogs.Text = "";
             // 
+            // btnClearLogs
+            // 
+            btnClearLogs.Location = new Point(3, 692);
+            btnClearLogs.Name = "btnClearLogs";
+            btnClearLogs.Size = new Size(99, 23);
+            btnClearLogs.TabIndex = 19;
+            btnClearLogs.Text = "Clear Logs";
+            btnClearLogs.UseVisualStyleBackColor = true;
+            btnClearLogs.Click += btnClearLogs_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -335,5 +347,6 @@
         private RichTextBox rtbLogs;
         private TextBox tbxIpAddress;
         private Label label7;
+        private Button btnClearLogs;
     }
 }
