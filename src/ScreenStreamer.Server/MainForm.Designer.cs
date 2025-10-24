@@ -1,0 +1,262 @@
+﻿namespace ScreenStreamer.Server
+{
+    partial class MainForm
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            tableLayoutPanel1 = new TableLayoutPanel();
+            pictureBox1 = new PictureBox();
+            panel1 = new Panel();
+            btnHidePreview = new Button();
+            lblByteSent = new Label();
+            label5 = new Label();
+            btnShowPreview = new Button();
+            label4 = new Label();
+            label3 = new Label();
+            label2 = new Label();
+            label1 = new Label();
+            btnStop = new Button();
+            tbxY2 = new TextBox();
+            tbxX2 = new TextBox();
+            tbxY1 = new TextBox();
+            tbxX1 = new TextBox();
+            btnStart = new Button();
+            tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 90F));
+            tableLayoutPanel1.Controls.Add(pictureBox1, 1, 0);
+            tableLayoutPanel1.Controls.Add(panel1, 0, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new Size(1125, 730);
+            tableLayoutPanel1.TabIndex = 0;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BorderStyle = BorderStyle.Fixed3D;
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(115, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(1007, 724);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnHidePreview);
+            panel1.Controls.Add(lblByteSent);
+            panel1.Controls.Add(label5);
+            panel1.Controls.Add(btnShowPreview);
+            panel1.Controls.Add(label4);
+            panel1.Controls.Add(label3);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(label1);
+            panel1.Controls.Add(btnStop);
+            panel1.Controls.Add(tbxY2);
+            panel1.Controls.Add(tbxX2);
+            panel1.Controls.Add(tbxY1);
+            panel1.Controls.Add(tbxX1);
+            panel1.Controls.Add(btnStart);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(3, 3);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(106, 724);
+            panel1.TabIndex = 2;
+            // 
+            // btnHidePreview
+            // 
+            btnHidePreview.Location = new Point(3, 106);
+            btnHidePreview.Name = "btnHidePreview";
+            btnHidePreview.Size = new Size(100, 23);
+            btnHidePreview.TabIndex = 14;
+            btnHidePreview.Text = "Hide Preview";
+            btnHidePreview.UseVisualStyleBackColor = true;
+            btnHidePreview.Click += btnHidePreview_Click;
+            // 
+            // lblByteSent
+            // 
+            lblByteSent.AutoSize = true;
+            lblByteSent.Location = new Point(9, 359);
+            lblByteSent.Name = "lblByteSent";
+            lblByteSent.Size = new Size(13, 15);
+            lblByteSent.TabIndex = 13;
+            lblByteSent.Text = "0";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(9, 344);
+            label5.Name = "label5";
+            label5.Size = new Size(30, 15);
+            label5.TabIndex = 12;
+            label5.Text = "Sent";
+            // 
+            // btnShowPreview
+            // 
+            btnShowPreview.Location = new Point(3, 77);
+            btnShowPreview.Name = "btnShowPreview";
+            btnShowPreview.Size = new Size(101, 23);
+            btnShowPreview.TabIndex = 11;
+            btnShowPreview.Text = "Show Preview";
+            btnShowPreview.UseVisualStyleBackColor = true;
+            btnShowPreview.Click += btnShowPreview_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(3, 298);
+            label4.Name = "label4";
+            label4.Size = new Size(20, 15);
+            label4.TabIndex = 10;
+            label4.Text = "Y2";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(3, 269);
+            label3.Name = "label3";
+            label3.Size = new Size(20, 15);
+            label3.TabIndex = 9;
+            label3.Text = "X2";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(3, 240);
+            label2.Name = "label2";
+            label2.Size = new Size(20, 15);
+            label2.TabIndex = 8;
+            label2.Text = "Y1";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(3, 211);
+            label1.Name = "label1";
+            label1.Size = new Size(20, 15);
+            label1.TabIndex = 7;
+            label1.Text = "X1";
+            // 
+            // btnStop
+            // 
+            btnStop.Location = new Point(3, 32);
+            btnStop.Name = "btnStop";
+            btnStop.Size = new Size(101, 23);
+            btnStop.TabIndex = 6;
+            btnStop.Text = "Stop Streaming";
+            btnStop.UseVisualStyleBackColor = true;
+            btnStop.Click += btnStop_Click;
+            // 
+            // tbxY2
+            // 
+            tbxY2.Location = new Point(29, 295);
+            tbxY2.Name = "tbxY2";
+            tbxY2.Size = new Size(29, 23);
+            tbxY2.TabIndex = 5;
+            tbxY2.Text = "0";
+            // 
+            // tbxX2
+            // 
+            tbxX2.Location = new Point(29, 266);
+            tbxX2.Name = "tbxX2";
+            tbxX2.Size = new Size(29, 23);
+            tbxX2.TabIndex = 4;
+            tbxX2.Text = "0";
+            // 
+            // tbxY1
+            // 
+            tbxY1.Location = new Point(29, 237);
+            tbxY1.Name = "tbxY1";
+            tbxY1.Size = new Size(29, 23);
+            tbxY1.TabIndex = 3;
+            tbxY1.Text = "0";
+            // 
+            // tbxX1
+            // 
+            tbxX1.Location = new Point(29, 208);
+            tbxX1.Name = "tbxX1";
+            tbxX1.Size = new Size(29, 23);
+            tbxX1.TabIndex = 2;
+            tbxX1.Text = "0";
+            // 
+            // btnStart
+            // 
+            btnStart.Location = new Point(3, 3);
+            btnStart.Name = "btnStart";
+            btnStart.Size = new Size(101, 23);
+            btnStart.TabIndex = 1;
+            btnStart.Text = "Start Streaming";
+            btnStart.UseVisualStyleBackColor = true;
+            btnStart.Click += btnStart_Click;
+            // 
+            // MainForm
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1125, 730);
+            Controls.Add(tableLayoutPanel1);
+            Name = "MainForm";
+            ShowIcon = false;
+            Text = "Screen Streamer";
+            tableLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
+        }
+
+        #endregion
+
+        private TableLayoutPanel tableLayoutPanel1;
+        private Panel panel1;
+        private TextBox tbxY2;
+        private TextBox tbxX2;
+        private TextBox tbxY1;
+        private TextBox tbxX1;
+        private Button btnStart;
+        private PictureBox pictureBox1;
+        private Button btnStop;
+        private Label label4;
+        private Label label3;
+        private Label label2;
+        private Label label1;
+        private Button btnShowPreview;
+        private Button btnHidePreview;
+        private Label lblByteSent;
+        private Label label5;
+    }
+}

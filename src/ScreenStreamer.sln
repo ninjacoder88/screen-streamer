@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenStreamerServer", "Scr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenStreamerClientConsole", "ScreenStreamerClientConsole\ScreenStreamerClientConsole.csproj", "{7C07D5BD-8878-4D84-B37E-623E19967737}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenStreamer.Server", "ScreenStreamer.Server\ScreenStreamer.Server.csproj", "{81653E52-394E-4735-AFB6-8DCAE66DDFBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7C07D5BD-8878-4D84-B37E-623E19967737}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C07D5BD-8878-4D84-B37E-623E19967737}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C07D5BD-8878-4D84-B37E-623E19967737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81653E52-394E-4735-AFB6-8DCAE66DDFBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81653E52-394E-4735-AFB6-8DCAE66DDFBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81653E52-394E-4735-AFB6-8DCAE66DDFBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81653E52-394E-4735-AFB6-8DCAE66DDFBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
