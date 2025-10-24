@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.Net;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 
 namespace ScreenStreamer.Server
@@ -16,33 +18,48 @@ namespace ScreenStreamer.Server
             _worker.DoWork += Worker_DoWork;
         }
 
-        //private void MainForm_ResizeEnd(object? sender, EventArgs e)
-        //{
-        //    _worker.RunWorkerAsync();
-        //}
-
-        //private void MainForm_ResizeBegin(object? sender, EventArgs e)
-        //{
-        //    _worker.CancelAsync();
-        //}
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private bool ShowPreview { get; set; }
-
         private bool Streaming { get; set; }
+
+        private bool Connected { get; set; }
 
         private void MainForm_Load(object? sender, EventArgs e) => _worker.RunWorkerAsync();
 
         private void MainForm_FormClosing(object? sender, FormClosingEventArgs e) => _worker.CancelAsync();
 
+        private void LogError(string message) => Log("ERROR", message);
+
+        private void LogInfo(string message) => Log("INFO", message);
+
+        private void Log(string severity, string message) => 
+            rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {severity} - {message}\r\n{rtbLogs.Text}");
+
+        private void UpdatePicture(Bitmap bitmap)
+        {
+            pbPreview.Invoke(() =>
+            {
+                try
+                {
+                    pbPreview.Image = bitmap;
+                    pbPreview.Update();
+                }
+                catch(Exception ex)
+                {
+                    LogError(ex.Message);
+                }
+            });
+        }
+
         private void Worker_DoWork(object? sender, DoWorkEventArgs e)
         {
-            int x1 = 0;
-            int y1 = 0;
-            int x2 = 0;
-            int y2 = 0;
+            int x1;
+            int y1;
+            int x2;
+            int y2;
             int interval = 250;
+            IPAddress? ipAddress;
+            const int Version = 3;
 
             try
             {
@@ -51,35 +68,53 @@ namespace ScreenStreamer.Server
                 x2 = tbxX2.GetIntValue();
                 y2 = tbxY2.GetIntValue();
                 interval = tbxInterval.GetIntValue();
-                rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - INFO - Current Interval: {interval}\r\n{rtbLogs.Text}");
             }
             catch(Exception ex)
             {
-                rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - ERROR - {ex.Message}\r\n{rtbLogs.Text}");
+                LogError(ex.Message);
                 return;
             }
 
             int streamHeight = y2 - y1;
             int streamWidth = x2 - x1;
 
-            Color[][] current = new Color[streamHeight][];
+            Pixel[][] current = new Pixel[streamHeight][];
             for (short x = 0; x < streamHeight; x++)
             {
-                current[x] = new Color[streamWidth];
+                current[x] = new Pixel[streamWidth];
                 for (short y = 0; y < streamWidth; y++)
-                {
-                    current[x][y] = Color.Black;
-                }
+                    current[x][y] = new Pixel(x, y, 255, 255, 255);
             }
 
+            UdpClient client = new UdpClient();
 
             while (true)
             {
                 if (_worker.CancellationPending)
+                {
+                    client.Close();
+                    client.Dispose();
                     return;
+                }
 
-                //rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - VERBOSE - \r\n{rtbLogs.Text}");
+                if(Streaming && !Connected)
+                {
+                    try
+                    {
+                        interval = tbxInterval.GetIntValue();
+                        ipAddress = IPAddress.Parse(tbxIpAddress.Text);
 
+                        client.Connect(ipAddress, 42069);
+                        LogInfo($"Connected to {ipAddress}");
+                        Connected = true;
+                    }
+                    catch(Exception ex)
+                    {
+                        LogError(ex.Message);
+                    }
+                }
+
+                List<Pixel> updatedPixels = new List<Pixel>();
                 try
                 {
                     using (Bitmap bitmap = new Bitmap(streamWidth, streamHeight))
@@ -89,174 +124,112 @@ namespace ScreenStreamer.Server
                             g.CopyFromScreen(Point.Empty, Point.Empty, new Size(streamWidth, streamHeight));
                         }
 
-                        pictureBox1.Invoke(() =>
+                        UpdatePicture(bitmap);
+
+                        for(short y = 0; y < streamHeight; y++)
                         {
-                            try
+                            for(short x = 0; x < streamWidth; x++)
                             {
-                                pictureBox1.Image = bitmap;
-                                pictureBox1.Update();
+                                Color c = bitmap.GetPixel(x, y);
+                                Pixel p = new Pixel(x, y, c.R, c.G, c.B);
+                                if (current[x][y] == p)
+                                    continue;
+                                updatedPixels.Add(p);
+                                current[x][y] = p;
                             }
-                            catch (Exception e)
-                            {
-                                rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - ERROR - {e.Message}\r\n{rtbLogs.Text}");
-                            }
-                        });
-
-                        //byte[] rawPacket = new byte[(streamHeight * streamWidth * 5) + (streamHeight * 4)];
-                        //short currentByte = 0;
-                        //rawPacket[currentByte++] = 0;//version
-                        //rawPacket[currentByte += 2] = 0;//size
-
-                        //for (short y = 0; y < streamHeight; y++)
-                        //{
-                        //    int rowStart = currentByte;
-                        //    BitConverter.GetBytes(y).CopyTo(rawPacket, currentByte += 2);
-                        //    rawPacket[currentByte += 2] = 0;//Pixel Count
-
-                        //    short updatedPixelCount = 0;
-                        //    for (short x = 0; x < streamWidth; x++)
-                        //    {
-                        //        Color c = bitmap.GetPixel(x, y);
-                        //        if (current[x][y] == c)
-                        //            continue;
-
-                        //        BitConverter.GetBytes(x).CopyTo(rawPacket, currentByte += 2);
-                        //        rawPacket[currentByte++] = c.R;
-                        //        rawPacket[currentByte++] = c.G;
-                        //        rawPacket[currentByte++] = c.B;
-                        //        updatedPixelCount++;
-                        //    }
-
-                        //    if (updatedPixelCount == 0)
-                        //    {
-                        //        currentByte -= 4;//subtract Y and PixelCount
-                        //    }
-                        //    else
-                        //    {
-                        //        BitConverter.GetBytes(updatedPixelCount).CopyTo(rawPacket, rowStart + 2);
-                        //    }
-                        //}
-
-                        //BitConverter.GetBytes(currentByte).CopyTo(rawPacket, 1);
-
-                        //byte[] packet = new byte[currentByte];
-                        //Buffer.BlockCopy(rawPacket, 0, packet, 0, packet.Length);
+                        }
                     }
-   
-                    //rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - VERBOSE - Copied pixels\r\n{rtbLogs.Text}");
                 }
                 catch(Exception ex)
                 {
-                    rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - ERROR - {ex.Message}\r\n{rtbLogs.Text}");
+                    LogError(ex.Message);
+                }
+
+                if (!Streaming)
+                {
+                    Thread.Sleep(interval);
+                    continue;
+                }
+
+                if (updatedPixels.Count == 0)
+                {
+                    Thread.Sleep(interval);
+                    continue;
+                }
+
+                int currentByte = 0;
+                short updatedRows = 0;
+                byte[] rawPacket = new byte[5 + (7 * updatedPixels.Count)];
+
+                try
+                {
+                    rawPacket[currentByte++] = Version;
+                    rawPacket[currentByte += 2] = 0;//packet size
+                    rawPacket[currentByte += 2] = 0;//row count
+
+                    short currentY = -1;
+                    foreach(Pixel pixel in updatedPixels)
+                    {
+                        if(pixel.Y != currentY)
+                        {
+                            BitConverter.GetBytes(currentY).CopyTo(rawPacket, currentByte += 2);
+                            currentY = pixel.Y;
+                            updatedRows++;
+                        }
+
+                        BitConverter.GetBytes(pixel.X).CopyTo(rawPacket, currentByte += 2);
+                        rawPacket[currentByte++] = pixel.R;
+                        rawPacket[currentByte++] = pixel.G;
+                        rawPacket[currentByte++] = pixel.B;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    LogError(ex.Message);
+                }
+
+                BitConverter.GetBytes(currentByte).CopyTo(rawPacket, 1);//update size of packet
+                BitConverter.GetBytes(updatedRows).CopyTo(rawPacket, 3);//update rows in packet
+
+                byte[] packet = new byte[currentByte];
+                Buffer.BlockCopy(rawPacket, 0, packet, 0, packet.Length);
+
+                try
+                {
+                    client.Send(packet, packet.Length);
+                    LogInfo($"Sent {packet.Length} bytes | Rows Updated: {updatedRows}");
+                }
+                catch(Exception ex)
+                {
+                    LogError(ex.Message);
                 }
 
                 Thread.Sleep(interval);
-
-                //if (ShowPreview)
-                //{
-                //    pictureBox1.Invoke(() =>
-                //    {
-                //        pictureBox1.Image = bitmap;
-                //        pictureBox1.Update();
-                //    });
-                //}
-
-                //if (Streaming)
-                //{
-                //    //build and send packets
-                //    byte[] rawPacket = new byte[(streamHeight * streamWidth * 5) + (streamHeight * 4)];
-
-                //    short currentByte = 0;
-                //    rawPacket[currentByte++] = 0;//version
-                //    rawPacket[currentByte+=2] = 0;//size
-
-
-                //    //byte[] rows = new byte[(streamWidth * 5) + (streamHeight * 4)];
-                //    for(short y = 0; y < streamHeight; y++)
-                //    {
-                //        //byte[] pixels = new byte[streamWidth * 5];
-                //        //short updatedPixelCount = 0;
-
-                //        int rowStart = currentByte;
-                //        BitConverter.GetBytes(y).CopyTo(rawPacket, currentByte += 2);
-                //        //rawPacket[currentByte+=2] = ;//Y
-                //        rawPacket[currentByte+=2] = 0;//Pixel Count
-
-                //        short updatedPixelCount = 0;
-                //        for(short x = 0; x < streamWidth; x++)
-                //        {
-                //            Color c = bitmap.GetPixel(x, y);
-                //            if (current[x][y] == c)
-                //                continue;
-
-                //            //rawPacket[currentByte += 2];
-                //            BitConverter.GetBytes(x).CopyTo(rawPacket, currentByte += 2);
-                //            rawPacket[currentByte++] = c.R;
-                //            rawPacket[currentByte++] = c.G;
-                //            rawPacket[currentByte++] = c.B;
-                //            updatedPixelCount++;
-
-                //            //byte[] pixel = new byte[5];
-                //            //byte[] xBytes = ;
-                //            //pixel[0] = xBytes[0];
-                //            //pixel[1] = xBytes[1];
-                //            //pixel[2] = c.R;
-                //            //pixel[3] = c.G;
-                //            //pixel[4] = c.B;
-
-                //            //pixel.CopyTo(rawPacket, updatedPixelCount * 5);
-                //            //updatedPixelCount++;
-                //        }
-
-                //        if(updatedPixelCount == 0)
-                //        {
-                //            currentByte -= 4;//subtract Y and PixelCount
-                //        }
-                //        else
-                //        {
-                //            BitConverter.GetBytes(updatedPixelCount).CopyTo(rawPacket, rowStart + 2);
-                //        }
-
-
-                //        //byte[] yBytes = BitConverter.GetBytes(y);
-                //        //byte[] pcBytes = BitConverter.GetBytes(updatedPixelCount);
-
-                //        //byte[] row = new byte[4 + (updatedPixelCount * 5)];
-                //        //row[0] = yBytes[0];
-                //        //row[1] = yBytes[1];
-                //        //row[2] = pcBytes[0];
-                //        //row[3] = pcBytes[1];
-                //        //Buffer.BlockCopy(row, 4, pixels, 0, (updatedPixelCount * 5));
-
-                //        //row.CopyTo(rows, y);
-                //    }
-
-                //    BitConverter.GetBytes(currentByte).CopyTo(rawPacket, 1);
-
-                //    byte[] packet = new byte[currentByte];
-                //    Buffer.BlockCopy(rawPacket, 0, packet, 0, packet.Length);
-                //}
             }
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             Streaming = true;
+            btnStart.Enabled = false;
+            btnStop.Enabled = true;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             Streaming = false;
+            btnStart.Enabled = true;
+            btnStop.Enabled = false;
         }
 
         private void btnShowPreview_Click(object sender, EventArgs e)
         {
-            ShowPreview = true;
+            //ShowPreview = true;
         }
 
         private void btnHidePreview_Click(object sender, EventArgs e)
         {
-            ShowPreview = false;
+            //ShowPreview = false;
         }
 
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -268,4 +241,6 @@ namespace ScreenStreamer.Server
 
         private BackgroundWorker _worker;
     }
+
+    public record Pixel(short X, short Y, byte R, byte G, byte B);
 }

@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             tableLayoutPanel1 = new TableLayoutPanel();
-            pictureBox1 = new PictureBox();
             panel1 = new Panel();
+            tbxIpAddress = new TextBox();
+            label7 = new Label();
             tbxInterval = new TextBox();
             label6 = new Label();
             btnHidePreview = new Button();
@@ -48,11 +49,12 @@
             tbxX1 = new TextBox();
             btnStart = new Button();
             tableLayoutPanel2 = new TableLayoutPanel();
+            pbPreview = new PictureBox();
             rtbLogs = new RichTextBox();
             tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbPreview).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -70,18 +72,10 @@
             tableLayoutPanel1.Size = new Size(1125, 730);
             tableLayoutPanel1.TabIndex = 0;
             // 
-            // pictureBox1
-            // 
-            pictureBox1.BorderStyle = BorderStyle.Fixed3D;
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(3, 3);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1001, 618);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
-            // 
             // panel1
             // 
+            panel1.Controls.Add(tbxIpAddress);
+            panel1.Controls.Add(label7);
             panel1.Controls.Add(tbxInterval);
             panel1.Controls.Add(label6);
             panel1.Controls.Add(btnHidePreview);
@@ -103,6 +97,23 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(106, 724);
             panel1.TabIndex = 2;
+            // 
+            // tbxIpAddress
+            // 
+            tbxIpAddress.Location = new Point(3, 141);
+            tbxIpAddress.Name = "tbxIpAddress";
+            tbxIpAddress.Size = new Size(100, 23);
+            tbxIpAddress.TabIndex = 18;
+            tbxIpAddress.Text = "127.0.0.1";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(3, 123);
+            label7.Name = "label7";
+            label7.Size = new Size(62, 15);
+            label7.TabIndex = 17;
+            label7.Text = "IP Address";
             // 
             // tbxInterval
             // 
@@ -197,6 +208,7 @@
             // 
             // btnStop
             // 
+            btnStop.Enabled = false;
             btnStop.Location = new Point(3, 445);
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(101, 23);
@@ -251,7 +263,7 @@
             // 
             tableLayoutPanel2.ColumnCount = 1;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Controls.Add(pictureBox1, 0, 0);
+            tableLayoutPanel2.Controls.Add(pbPreview, 0, 0);
             tableLayoutPanel2.Controls.Add(rtbLogs, 0, 1);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(115, 3);
@@ -261,6 +273,16 @@
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
             tableLayoutPanel2.Size = new Size(1007, 724);
             tableLayoutPanel2.TabIndex = 3;
+            // 
+            // pbPreview
+            // 
+            pbPreview.BorderStyle = BorderStyle.Fixed3D;
+            pbPreview.Dock = DockStyle.Fill;
+            pbPreview.Location = new Point(3, 3);
+            pbPreview.Name = "pbPreview";
+            pbPreview.Size = new Size(1001, 618);
+            pbPreview.TabIndex = 0;
+            pbPreview.TabStop = false;
             // 
             // rtbLogs
             // 
@@ -281,10 +303,10 @@
             ShowIcon = false;
             Text = "Screen Streamer";
             tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pbPreview).EndInit();
             ResumeLayout(false);
         }
 
@@ -297,7 +319,7 @@
         private TextBox tbxY1;
         private TextBox tbxX1;
         private Button btnStart;
-        private PictureBox pictureBox1;
+        private PictureBox pbPreview;
         private Button btnStop;
         private Label label4;
         private Label label3;
@@ -311,5 +333,7 @@
         private Label label6;
         private TableLayoutPanel tableLayoutPanel2;
         private RichTextBox rtbLogs;
+        private TextBox tbxIpAddress;
+        private Label label7;
     }
 }
