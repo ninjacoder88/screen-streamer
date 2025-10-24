@@ -78,10 +78,7 @@ namespace ScreenStreamer.Server
                 if (_worker.CancellationPending)
                     return;
 
-                rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - VERBOSE - \r\n{rtbLogs.Text}");
-
-                //if (!ShowPreview && !Streaming)
-                //    continue;
+                //rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - VERBOSE - \r\n{rtbLogs.Text}");
 
                 try
                 {
@@ -91,8 +88,62 @@ namespace ScreenStreamer.Server
                         {
                             g.CopyFromScreen(Point.Empty, Point.Empty, new Size(streamWidth, streamHeight));
                         }
+
+                        pictureBox1.Invoke(() =>
+                        {
+                            try
+                            {
+                                pictureBox1.Image = bitmap;
+                                pictureBox1.Update();
+                            }
+                            catch (Exception e)
+                            {
+                                rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - ERROR - {e.Message}\r\n{rtbLogs.Text}");
+                            }
+                        });
+
+                        //byte[] rawPacket = new byte[(streamHeight * streamWidth * 5) + (streamHeight * 4)];
+                        //short currentByte = 0;
+                        //rawPacket[currentByte++] = 0;//version
+                        //rawPacket[currentByte += 2] = 0;//size
+
+                        //for (short y = 0; y < streamHeight; y++)
+                        //{
+                        //    int rowStart = currentByte;
+                        //    BitConverter.GetBytes(y).CopyTo(rawPacket, currentByte += 2);
+                        //    rawPacket[currentByte += 2] = 0;//Pixel Count
+
+                        //    short updatedPixelCount = 0;
+                        //    for (short x = 0; x < streamWidth; x++)
+                        //    {
+                        //        Color c = bitmap.GetPixel(x, y);
+                        //        if (current[x][y] == c)
+                        //            continue;
+
+                        //        BitConverter.GetBytes(x).CopyTo(rawPacket, currentByte += 2);
+                        //        rawPacket[currentByte++] = c.R;
+                        //        rawPacket[currentByte++] = c.G;
+                        //        rawPacket[currentByte++] = c.B;
+                        //        updatedPixelCount++;
+                        //    }
+
+                        //    if (updatedPixelCount == 0)
+                        //    {
+                        //        currentByte -= 4;//subtract Y and PixelCount
+                        //    }
+                        //    else
+                        //    {
+                        //        BitConverter.GetBytes(updatedPixelCount).CopyTo(rawPacket, rowStart + 2);
+                        //    }
+                        //}
+
+                        //BitConverter.GetBytes(currentByte).CopyTo(rawPacket, 1);
+
+                        //byte[] packet = new byte[currentByte];
+                        //Buffer.BlockCopy(rawPacket, 0, packet, 0, packet.Length);
                     }
-                    rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - VERBOSE - Copied pixels\r\n{rtbLogs.Text}");
+   
+                    //rtbLogs.Invoke(() => rtbLogs.Text = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - VERBOSE - Copied pixels\r\n{rtbLogs.Text}");
                 }
                 catch(Exception ex)
                 {
@@ -101,100 +152,90 @@ namespace ScreenStreamer.Server
 
                 Thread.Sleep(interval);
 
-                //        if (ShowPreview)
+                //if (ShowPreview)
+                //{
+                //    pictureBox1.Invoke(() =>
+                //    {
+                //        pictureBox1.Image = bitmap;
+                //        pictureBox1.Update();
+                //    });
+                //}
+
+                //if (Streaming)
+                //{
+                //    //build and send packets
+                //    byte[] rawPacket = new byte[(streamHeight * streamWidth * 5) + (streamHeight * 4)];
+
+                //    short currentByte = 0;
+                //    rawPacket[currentByte++] = 0;//version
+                //    rawPacket[currentByte+=2] = 0;//size
+
+
+                //    //byte[] rows = new byte[(streamWidth * 5) + (streamHeight * 4)];
+                //    for(short y = 0; y < streamHeight; y++)
+                //    {
+                //        //byte[] pixels = new byte[streamWidth * 5];
+                //        //short updatedPixelCount = 0;
+
+                //        int rowStart = currentByte;
+                //        BitConverter.GetBytes(y).CopyTo(rawPacket, currentByte += 2);
+                //        //rawPacket[currentByte+=2] = ;//Y
+                //        rawPacket[currentByte+=2] = 0;//Pixel Count
+
+                //        short updatedPixelCount = 0;
+                //        for(short x = 0; x < streamWidth; x++)
                 //        {
-                //            pictureBox1.Invoke(() =>
-                //            {
-                //                pictureBox1.Image = bitmap;
-                //                pictureBox1.Update();
-                //            });
+                //            Color c = bitmap.GetPixel(x, y);
+                //            if (current[x][y] == c)
+                //                continue;
+
+                //            //rawPacket[currentByte += 2];
+                //            BitConverter.GetBytes(x).CopyTo(rawPacket, currentByte += 2);
+                //            rawPacket[currentByte++] = c.R;
+                //            rawPacket[currentByte++] = c.G;
+                //            rawPacket[currentByte++] = c.B;
+                //            updatedPixelCount++;
+
+                //            //byte[] pixel = new byte[5];
+                //            //byte[] xBytes = ;
+                //            //pixel[0] = xBytes[0];
+                //            //pixel[1] = xBytes[1];
+                //            //pixel[2] = c.R;
+                //            //pixel[3] = c.G;
+                //            //pixel[4] = c.B;
+
+                //            //pixel.CopyTo(rawPacket, updatedPixelCount * 5);
+                //            //updatedPixelCount++;
                 //        }
 
-                //        //if (Streaming)
-                //        //{
-                //        //    //build and send packets
-                //        //    byte[] rawPacket = new byte[(streamHeight * streamWidth * 5) + (streamHeight * 4)];
-
-                //        //    short currentByte = 0;
-                //        //    rawPacket[currentByte++] = 0;//version
-                //        //    rawPacket[currentByte+=2] = 0;//size
-
-
-                //        //    //byte[] rows = new byte[(streamWidth * 5) + (streamHeight * 4)];
-                //        //    for(short y = 0; y < streamHeight; y++)
-                //        //    {
-                //        //        //byte[] pixels = new byte[streamWidth * 5];
-                //        //        //short updatedPixelCount = 0;
-
-                //        //        int rowStart = currentByte;
-                //        //        BitConverter.GetBytes(y).CopyTo(rawPacket, currentByte += 2);
-                //        //        //rawPacket[currentByte+=2] = ;//Y
-                //        //        rawPacket[currentByte+=2] = 0;//Pixel Count
-
-                //        //        short updatedPixelCount = 0;
-                //        //        for(short x = 0; x < streamWidth; x++)
-                //        //        {
-                //        //            Color c = bitmap.GetPixel(x, y);
-                //        //            if (current[x][y] == c)
-                //        //                continue;
-
-                //        //            //rawPacket[currentByte += 2];
-                //        //            BitConverter.GetBytes(x).CopyTo(rawPacket, currentByte += 2);
-                //        //            rawPacket[currentByte++] = c.R;
-                //        //            rawPacket[currentByte++] = c.G;
-                //        //            rawPacket[currentByte++] = c.B;
-                //        //            updatedPixelCount++;
-
-                //        //            //byte[] pixel = new byte[5];
-                //        //            //byte[] xBytes = ;
-                //        //            //pixel[0] = xBytes[0];
-                //        //            //pixel[1] = xBytes[1];
-                //        //            //pixel[2] = c.R;
-                //        //            //pixel[3] = c.G;
-                //        //            //pixel[4] = c.B;
-
-                //        //            //pixel.CopyTo(rawPacket, updatedPixelCount * 5);
-                //        //            //updatedPixelCount++;
-                //        //        }
-
-                //        //        if(updatedPixelCount == 0)
-                //        //        {
-                //        //            currentByte -= 4;//subtract Y and PixelCount
-                //        //        }
-                //        //        else
-                //        //        {
-                //        //            BitConverter.GetBytes(updatedPixelCount).CopyTo(rawPacket, rowStart + 2);
-                //        //        }
+                //        if(updatedPixelCount == 0)
+                //        {
+                //            currentByte -= 4;//subtract Y and PixelCount
+                //        }
+                //        else
+                //        {
+                //            BitConverter.GetBytes(updatedPixelCount).CopyTo(rawPacket, rowStart + 2);
+                //        }
 
 
-                //        //        //byte[] yBytes = BitConverter.GetBytes(y);
-                //        //        //byte[] pcBytes = BitConverter.GetBytes(updatedPixelCount);
+                //        //byte[] yBytes = BitConverter.GetBytes(y);
+                //        //byte[] pcBytes = BitConverter.GetBytes(updatedPixelCount);
 
-                //        //        //byte[] row = new byte[4 + (updatedPixelCount * 5)];
-                //        //        //row[0] = yBytes[0];
-                //        //        //row[1] = yBytes[1];
-                //        //        //row[2] = pcBytes[0];
-                //        //        //row[3] = pcBytes[1];
-                //        //        //Buffer.BlockCopy(row, 4, pixels, 0, (updatedPixelCount * 5));
+                //        //byte[] row = new byte[4 + (updatedPixelCount * 5)];
+                //        //row[0] = yBytes[0];
+                //        //row[1] = yBytes[1];
+                //        //row[2] = pcBytes[0];
+                //        //row[3] = pcBytes[1];
+                //        //Buffer.BlockCopy(row, 4, pixels, 0, (updatedPixelCount * 5));
 
-                //        //        //row.CopyTo(rows, y);
-                //        //    }
-
-                //        //    BitConverter.GetBytes(currentByte).CopyTo(rawPacket, 1);
-
-                //        //    byte[] packet = new byte[currentByte];
-                //        //    Buffer.BlockCopy(rawPacket, 0, packet, 0, packet.Length);
-                //        //}
+                //        //row.CopyTo(rows, y);
                 //    }
+
+                //    BitConverter.GetBytes(currentByte).CopyTo(rawPacket, 1);
+
+                //    byte[] packet = new byte[currentByte];
+                //    Buffer.BlockCopy(rawPacket, 0, packet, 0, packet.Length);
                 //}
-                //catch(Exception ex)
-                //{
-
-                //}
-
-
-
-
             }
         }
 
