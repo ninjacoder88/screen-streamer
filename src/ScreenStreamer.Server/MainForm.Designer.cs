@@ -31,6 +31,8 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             pictureBox1 = new PictureBox();
             panel1 = new Panel();
+            tbxInterval = new TextBox();
+            label6 = new Label();
             btnHidePreview = new Button();
             lblByteSent = new Label();
             label5 = new Label();
@@ -45,9 +47,12 @@
             tbxY1 = new TextBox();
             tbxX1 = new TextBox();
             btnStart = new Button();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            rtbLogs = new RichTextBox();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -55,8 +60,8 @@
             tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 90F));
-            tableLayoutPanel1.Controls.Add(pictureBox1, 1, 0);
             tableLayoutPanel1.Controls.Add(panel1, 0, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -69,14 +74,16 @@
             // 
             pictureBox1.BorderStyle = BorderStyle.Fixed3D;
             pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(115, 3);
+            pictureBox1.Location = new Point(3, 3);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1007, 724);
+            pictureBox1.Size = new Size(1001, 618);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
             // panel1
             // 
+            panel1.Controls.Add(tbxInterval);
+            panel1.Controls.Add(label6);
             panel1.Controls.Add(btnHidePreview);
             panel1.Controls.Add(lblByteSent);
             panel1.Controls.Add(label5);
@@ -97,9 +104,26 @@
             panel1.Size = new Size(106, 724);
             panel1.TabIndex = 2;
             // 
+            // tbxInterval
+            // 
+            tbxInterval.Location = new Point(2, 86);
+            tbxInterval.Name = "tbxInterval";
+            tbxInterval.Size = new Size(56, 23);
+            tbxInterval.TabIndex = 16;
+            tbxInterval.Text = "250";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(3, 68);
+            label6.Name = "label6";
+            label6.Size = new Size(46, 15);
+            label6.TabIndex = 15;
+            label6.Text = "Interval";
+            // 
             // btnHidePreview
             // 
-            btnHidePreview.Location = new Point(3, 106);
+            btnHidePreview.Location = new Point(2, 32);
             btnHidePreview.Name = "btnHidePreview";
             btnHidePreview.Size = new Size(100, 23);
             btnHidePreview.TabIndex = 14;
@@ -127,7 +151,7 @@
             // 
             // btnShowPreview
             // 
-            btnShowPreview.Location = new Point(3, 77);
+            btnShowPreview.Location = new Point(2, 3);
             btnShowPreview.Name = "btnShowPreview";
             btnShowPreview.Size = new Size(101, 23);
             btnShowPreview.TabIndex = 11;
@@ -173,7 +197,7 @@
             // 
             // btnStop
             // 
-            btnStop.Location = new Point(3, 32);
+            btnStop.Location = new Point(3, 445);
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(101, 23);
             btnStop.TabIndex = 6;
@@ -187,7 +211,7 @@
             tbxY2.Name = "tbxY2";
             tbxY2.Size = new Size(29, 23);
             tbxY2.TabIndex = 5;
-            tbxY2.Text = "0";
+            tbxY2.Text = "500";
             // 
             // tbxX2
             // 
@@ -195,7 +219,7 @@
             tbxX2.Name = "tbxX2";
             tbxX2.Size = new Size(29, 23);
             tbxX2.TabIndex = 4;
-            tbxX2.Text = "0";
+            tbxX2.Text = "500";
             // 
             // tbxY1
             // 
@@ -215,13 +239,37 @@
             // 
             // btnStart
             // 
-            btnStart.Location = new Point(3, 3);
+            btnStart.Location = new Point(2, 416);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(101, 23);
             btnStart.TabIndex = 1;
             btnStart.Text = "Start Streaming";
             btnStart.UseVisualStyleBackColor = true;
             btnStart.Click += btnStart_Click;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 1;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Controls.Add(pictureBox1, 0, 0);
+            tableLayoutPanel2.Controls.Add(rtbLogs, 0, 1);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(115, 3);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 2;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
+            tableLayoutPanel2.Size = new Size(1007, 724);
+            tableLayoutPanel2.TabIndex = 3;
+            // 
+            // rtbLogs
+            // 
+            rtbLogs.Dock = DockStyle.Fill;
+            rtbLogs.Location = new Point(3, 627);
+            rtbLogs.Name = "rtbLogs";
+            rtbLogs.Size = new Size(1001, 94);
+            rtbLogs.TabIndex = 1;
+            rtbLogs.Text = "";
             // 
             // MainForm
             // 
@@ -236,6 +284,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -258,5 +307,9 @@
         private Button btnHidePreview;
         private Label lblByteSent;
         private Label label5;
+        private TextBox tbxInterval;
+        private Label label6;
+        private TableLayoutPanel tableLayoutPanel2;
+        private RichTextBox rtbLogs;
     }
 }
